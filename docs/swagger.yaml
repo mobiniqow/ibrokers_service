@@ -1,0 +1,188 @@
+definitions:
+  basics.APIError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  broker.CreateBrokerRequest:
+    properties:
+      description:
+        type: string
+      nationalId:
+        type: string
+      persianName:
+        type: string
+      spotId:
+        type: integer
+    type: object
+  broker.Response:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      nationalId:
+        type: string
+      persianName:
+        type: string
+      spotId:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /broker/api/v1/:
+    get:
+      consumes:
+      - application/json
+      description: Get all brokers
+      parameters:
+      - description: page number
+        in: query
+        name: page
+        type: integer
+      - description: page size
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/broker.Response'
+            type: array
+      summary: List of brokers
+      tags:
+      - broker
+    post:
+      consumes:
+      - application/json
+      description: Create a new broker with the provided information
+      parameters:
+      - description: Broker information
+        in: body
+        name: broker
+        required: true
+        schema:
+          $ref: '#/definitions/broker.CreateBrokerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/broker.Response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/basics.APIError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/basics.APIError'
+      summary: Create broker
+      tags:
+      - broker
+  /broker/api/v1/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a broker by its ID
+      parameters:
+      - description: Broker ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Invalid UUID format
+          schema:
+            $ref: '#/definitions/basics.APIError'
+        "404":
+          description: Broker not found
+          schema:
+            $ref: '#/definitions/basics.APIError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/basics.APIError'
+      summary: Delete broker
+      tags:
+      - broker
+    get:
+      consumes:
+      - application/json
+      description: Retrieve details of a broker by its ID
+      parameters:
+      - description: Broker ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/broker.Response'
+        "400":
+          description: Invalid UUID format
+          schema:
+            $ref: '#/definitions/basics.APIError'
+        "404":
+          description: Broker not found
+          schema:
+            $ref: '#/definitions/basics.APIError'
+      summary: Get broker details
+      tags:
+      - broker
+    put:
+      consumes:
+      - application/json
+      description: Update broker details by ID
+      parameters:
+      - description: Broker ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Broker information
+        in: body
+        name: broker
+        required: true
+        schema:
+          $ref: '#/definitions/broker.CreateBrokerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/broker.Response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/basics.APIError'
+        "404":
+          description: Broker not found
+          schema:
+            $ref: '#/definitions/basics.APIError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/basics.APIError'
+      summary: Update broker
+      tags:
+      - broker
+swagger: "2.0"
