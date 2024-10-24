@@ -13,14 +13,13 @@ def create_handler_file(class_name):
 import (
     "errors"
     "net/http"
-    "tourino/pkg/middleware/filter/operators"
-    "tourino/pkg/middleware/pagination"
-    "tourino/pkg/utils/basics"
-    "tourino/pkg/utils/manager"
+    "ibrokers_service/pkg/middleware/filter/operators"
+    "ibrokers_service/pkg/middleware/pagination"
+    "ibrokers_service/pkg/utils/basics"
+    "ibrokers_service/pkg/utils/manager"
     "strconv"
-
+    "reflect"
     "github.com/gin-gonic/gin"
-    "github.com/google/uuid"
 )
 
 const BucketName = "{package_name}"
@@ -42,7 +41,7 @@ type Handler struct {{
 // @Param        age     query     string  false  "Search by age"
 // @Param        page    query     int     false  "page number"
 // @Param        limit   query     int     false  "page size"
-// @Success      200     {{array}}   Response
+// @Success      200     {{array}}   {class_name}Response
 // @Router       /{package_name}/api/v1/ [get]
 func (h *Handler) Get{class_name}(ctx *gin.Context) {{
     page := ctx.MustGet("page").(int)
@@ -50,7 +49,7 @@ func (h *Handler) Get{class_name}(ctx *gin.Context) {{
     filters, _ := ctx.Get("filters")
     {class_name.lower()}s, count := h.Service.GetAll{class_name}s(limit, page, filters.([]operators.FilterBlock))
 
-    response := make([]Response, len({class_name.lower()}s))
+    response := make([]{class_name}Response, len({class_name.lower()}s))
     for i, {class_name.lower()} := range {class_name.lower()}s {{
         response[i] = To{class_name}Response({class_name.lower()})
     }}
@@ -66,7 +65,7 @@ func (h *Handler) Get{class_name}(ctx *gin.Context) {{
 // @Accept       json
 // @Produce      json
 // @Param        id   path    string  true  "{class_name} ID"
-// @Success      200 {{object}} Response
+// @Success      200 {{object}} {class_name}Response
 // @Failure      400 {{object}} basics.APIError "Invalid UUID format"
 // @Failure      404 {{object}} basics.APIError "{class_name} not found"
 // @Router       /{package_name}/api/v1/{{id}} [get]
@@ -99,7 +98,7 @@ func (h *Handler) Get{class_name}Details(ctx *gin.Context) {{
 // @Param        name  formData  string  true  "{class_name} name"
 // @Param        age   formData  int     true  "{class_name} age"
 // @Param        image formData  file    true  "{class_name} image"
-// @Success      201 {{object}} Response
+// @Success      201 {{object}} {class_name}Response
 // @Failure      400 {{object}} basics.APIError "Invalid request"
 // @Failure      500 {{object}} basics.APIError "Internal server error"
 // @Router       /{package_name}/api/v1/ [post]
@@ -130,7 +129,7 @@ func (h *Handler) Create{class_name}(ctx *gin.Context) {{
 // @Param        name  formData string  false "{class_name} name"
 // @Param        age   formData int     false "{class_name} age"
 // @Param        image formData file    false "{class_name} image"
-// @Success      200 {{object}} Response
+// @Success      200 {{object}} {class_name}Response
 // @Failure      400 {{object}} basics.APIError "Invalid request"
 // @Failure      404 {{object}} basics.APIError "{class_name} not found"
 // @Failure      500 {{object}} basics.APIError "Internal server error"
@@ -150,24 +149,14 @@ func (h *Handler) Update{class_name}(ctx *gin.Context) {{
         basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
         return
     }}
-
     var req Create{class_name}Request
     if err := ctx.ShouldBind(&req); err != nil {{
         basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
         return
     }}
 
-    if req.Image != nil {{
-        path, err := h.FileManager.SaveFile(BucketName, req.Image)
-        if err != nil {{
-            basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-            return
-        }}
-        {class_name.lower()}.Image = path
-    }}
-    {class_name.lower()}.Age = *req.Age
-    {class_name.lower()}.Name = *req.Name
-
+    update{class_name}(&{class_name.lower()},&req)
+    
     if err := h.Service.Update{class_name}({class_name.lower()}); err != nil {{
         basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
         return
@@ -185,7 +174,7 @@ func (h *Handler) Update{class_name}(ctx *gin.Context) {{
 // @Produce      json
 // @Param        id   path    string  true  "{class_name} ID"
 // @Param        city body    Create{class_name}Request true "Partial {class_name} information"
-// @Success      200 {{object}} Response
+// @Success      200 {{object}} {class_name}Response
 // @Failure      400 {{object}} basics.APIError "Invalid request"
 // @Failure      404 {{object}} basics.APIError "{class_name.lower()} not found"
 // @Failure      500 {{object}} basics.APIError "Internal server error"
@@ -207,18 +196,12 @@ func (h *Handler) Update{class_name}Partial(ctx *gin.Context) {{
     }}
 
     var req Create{class_name}Request
+    update{class_name}(&{class_name.lower()},&req)
     if err := ctx.ShouldBind(&req); err != nil {{
         basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
         return
     }}
- 
-    if req.Age != nil {{
-        {class_name.lower()}.Age = *req.Age
-    }}
-    if req.Name != nil {{
-        {class_name.lower()}.Name = *req.Name
-    }}
-
+   
     if err := h.Service.Update{class_name}({class_name.lower()}); err != nil {{
         basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
         return
@@ -263,6 +246,23 @@ func (h *Handler) Delete{class_name}(ctx *gin.Context) {{
     }}
 
     ctx.Status(http.StatusNoContent) // 204 No Content
+}}
+
+func update{class_name}({class_name.lower()} *{class_name}, req *Create{class_name}Request) error {{
+	{class_name.lower()}Val := reflect.ValueOf({class_name.lower()}).Elem()
+	reqVal := reflect.ValueOf(req).Elem()
+
+	for i := 0; i < reqVal.NumField(); i++ {{
+		fieldVal := reqVal.Field(i)
+		if !fieldVal.IsNil() {{
+			{class_name.lower()}Field := offerVal.FieldByName(reqVal.Type().Field(i).Name)
+			if {class_name.lower()}Field.IsValid() && {class_name.lower()}Field.CanSet() {{
+				{class_name.lower()}Field.Set(reflect.Indirect(fieldVal))
+			}}
+		}}
+	}}
+
+	return nil
 }}
 """
 

@@ -12,7 +12,7 @@ def create_endpoints_file(class_name):
 
 import (
     "github.com/gin-gonic/gin"
-    "tourino/pkg/utils/manager"
+    "ibrokers_service/pkg/utils/manager"
 )
 
 type Endpoints struct {{

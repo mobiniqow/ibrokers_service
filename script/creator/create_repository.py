@@ -24,7 +24,6 @@ type Repository struct {{
 }}
 
 func (r *Repository) Create{class_name}(item {class_name}) ({class_name}, error) {{
-    var err error
     result := r.DB.Create(&item)
     if result.Error != nil {{
         return {class_name}{{}}, result.Error

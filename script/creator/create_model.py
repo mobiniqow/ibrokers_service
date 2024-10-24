@@ -5,6 +5,11 @@ def create_struct_to_file(model_info):
     package_name = pascal_to_snake(model_name)
     
     golang_struct = f"package {package_name}\n\n"
+    for field_name, field_type in model_info['fields'].items():
+        if "time.Time" in field_type:
+            golang_struct += 'import "time";'
+            break
+    
     golang_struct += f"type {model_name} struct {{\n"
     
     for field_name, field_type in model_info['fields'].items():

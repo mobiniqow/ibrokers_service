@@ -8,24 +8,25 @@ def create_mapper(class_name, fields):
 
     # Create the fields for the response
     response_fields = []
+    time=''
     for field_name, field_type in fields.items():
         if field_type == 'str':
-            response_fields.append(f'\t\t{field_name.capitalize()}: buyMethod.{field_name.capitalize()},')
+            response_fields.append(f'\t\t{field_name.capitalize()}: &buyMethod.{field_name.capitalize()},')
         elif field_type == 'int':
-            response_fields.append(f'\t\t{field_name.capitalize()}: strconv.Itoa(buyMethod.{field_name.capitalize()}),')
+            response_fields.append(f'\t\t{field_name.capitalize()}: &buyMethod.{field_name.capitalize()},')
         elif field_type == 'date':
-            response_fields.append(f'\t\t{field_name.capitalize()}: buyMethod.{field_name.capitalize()}.Format(time.RFC3339),')
+            time='import "time"'
+            response_fields.append(f'\t\t{field_name.capitalize()}: &buyMethod.{field_name.capitalize()},')
 
     # Create the content of the ToResponse function
+    
     function_content = f"""package {package_name}
 
-import (
-    "strconv"
-    "time"
-)
+{time}
 
-func To{class_name}Response(buyMethod {class_name}) Response {{
-    return Response {{
+
+func To{class_name}Response(buyMethod {class_name}) {class_name}Response {{
+    return {class_name}Response {{
 {"\n".join(response_fields)}
     }}
 }}

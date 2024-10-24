@@ -6,7 +6,7 @@ def create_model_file(model_data):
     class_name = model_data['class_name']
     package_name = pascal_to_snake(class_name)
     model_filename = os.path.join(package_name, f"reqres.go")
-
+    time=''
     # Create fields based on the provided model_data
     fields = []
     for field_name, field_type in model_data['fields'].items():
@@ -15,19 +15,20 @@ def create_model_file(model_data):
         elif field_type == 'int':
             fields.append(f'\t{field_name.capitalize()} *int `json:"{field_name}"`')
         elif field_type == 'date':
+            time='import "time";'
             fields.append(f'\t{field_name.capitalize()} *time.Time `json:"{field_name}"`')
     
     # Create the content of the model file
     model_content = f"""package {package_name}
 
-import "time"
+{time}
 
 type Create{class_name}Request struct {{
 {"\n".join(fields)}
 }}
 
-type Response struct {{
-    {class_name} {class_name} `json:"{class_name}"`
+type {class_name}Response struct {{
+    {"\n".join(fields)}
 }}
 """
 

@@ -20,7 +20,7 @@ func (s *Service) Create{class_name}(item {class_name}) ({class_name}, error) {{
 }}
 
 func (s *Service) Update{class_name}(item {class_name}) error {{
-    _, err := s.Repository.Find{class_name}ById(item.ID)
+    _, err := s.Repository.Find{class_name}ById(item.Id)
     if err != nil {{
         return err
     }}
