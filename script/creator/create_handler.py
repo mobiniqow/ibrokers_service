@@ -154,20 +154,20 @@ func (h *Handler) Update{class_name}(ctx *gin.Context) {{
         basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
         return
     }}
-    var req Create{class_name}Request
+    var req {class_name}
     if err := ctx.ShouldBind(&req); err != nil {{
         basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
         return
     }}
 
-    update{class_name}(&{class_name.lower()},&req)
-    
-    if err := h.Service.Update{class_name}({class_name.lower()}); err != nil {{
+   
+    req.Id = {class_name.lower()}.Id
+    if err := h.Service.Update{class_name}(req); err != nil {{
         basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
         return
     }}
 
-    response := To{class_name}Response({class_name.lower()})
+    response := To{class_name}Response(req)
     ctx.JSON(http.StatusOK, response)
 }} 
 
@@ -201,11 +201,11 @@ func (h *Handler) Update{class_name}Partial(ctx *gin.Context) {{
     }}
 
     var req Create{class_name}Request
-    update{class_name}(&{class_name.lower()},&req)
     if err := ctx.ShouldBind(&req); err != nil {{
         basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
         return
     }}
+    update{class_name}(&{class_name.lower()},&req)
    
     if err := h.Service.Update{class_name}({class_name.lower()}); err != nil {{
         basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())

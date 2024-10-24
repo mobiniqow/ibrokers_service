@@ -16,7 +16,7 @@ def create_mapper(class_name, fields):
     response_fields = []
     time=''
     for field_name, field_type in fields.items():
-        if field_type == 'str':
+        if field_type == 'string':
             response_fields.append(f'\t\t{field_name.capitalize()}: &buyMethod.{field_name.capitalize()},')
         elif field_type == 'int':
             response_fields.append(f'\t\t{field_name.capitalize()}: &buyMethod.{field_name.capitalize()},')

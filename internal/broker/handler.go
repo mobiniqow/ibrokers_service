@@ -1,15 +1,15 @@
 package broker
 
 import (
-	"errors"
-	"github.com/gin-gonic/gin"
-	"ibrokers_service/pkg/middleware/filter/operators"
-	"ibrokers_service/pkg/middleware/pagination"
-	"ibrokers_service/pkg/utils/basics"
-	"ibrokers_service/pkg/utils/manager"
-	"net/http"
-	"reflect"
-	"strconv"
+    "errors"
+    "net/http"
+    "ibrokers_service/pkg/middleware/filter/operators"
+    "ibrokers_service/pkg/middleware/pagination"
+    "ibrokers_service/pkg/utils/basics"
+    "ibrokers_service/pkg/utils/manager"
+    "strconv"
+    "reflect"
+    "github.com/gin-gonic/gin"
 )
 
 const BucketName = "broker"
@@ -17,8 +17,8 @@ const BucketName = "broker"
 var ErrBrokerNotFound = errors.New("broker not found")
 
 type Handler struct {
-	Service     Service
-	FileManager manager.FileManager
+    Service     Service
+    FileManager manager.FileManager
 }
 
 // ListBrokers godoc
@@ -27,23 +27,25 @@ type Handler struct {
 // @Tags         broker
 // @Accept       json
 // @Produce      json
+// @Param        name    query     string  false  "Search by name"
+// @Param        age     query     string  false  "Search by age"
 // @Param        page    query     int     false  "page number"
 // @Param        limit   query     int     false  "page size"
 // @Success      200     {array}   BrokerResponse
 // @Router       /broker/api/v1/ [get]
 func (h *Handler) GetBroker(ctx *gin.Context) {
-	page := ctx.MustGet("page").(int)
-	limit := ctx.MustGet("limit").(int)
-	filters, _ := ctx.Get("filters")
-	brokers, count := h.Service.GetAllBrokers(limit, page, filters.([]operators.FilterBlock))
+    page := ctx.MustGet("page").(int)
+    limit := ctx.MustGet("limit").(int)
+    filters, _ := ctx.Get("filters")
+    brokers, count := h.Service.GetAllBrokers(limit, page, filters.([]operators.FilterBlock))
 
-	response := make([]BrokerResponse, len(brokers))
-	for i, broker := range brokers {
-		response[i] = ToBrokerResponse(broker)
-	}
-	paginationResponse := pagination.GenerateResponse(limit, page, count, ctx, response)
+    response := make([]BrokerResponse, len(brokers))
+    for i, broker := range brokers {
+        response[i] = ToBrokerResponse(broker)
+    }
+    paginationResponse := pagination.GenerateResponse(limit, page, count, ctx, response)
 
-	ctx.JSON(http.StatusOK, paginationResponse)
+    ctx.JSON(http.StatusOK, paginationResponse)
 }
 
 // GetBrokerDetails godoc
@@ -58,23 +60,23 @@ func (h *Handler) GetBroker(ctx *gin.Context) {
 // @Failure      404 {object} basics.APIError "Broker not found"
 // @Router       /broker/api/v1/{id} [get]
 func (h *Handler) GetBrokerDetails(ctx *gin.Context) {
-	brokerId, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
-		return
-	}
+    brokerId, err := strconv.Atoi(ctx.Param("id"))
+    if err != nil {
+        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
+        return
+    }
 
-	broker, err := h.Service.Repository.FindBrokerById(brokerId)
-	if errors.Is(err, ErrBrokerNotFound) {
-		basics.ErrorResponse(ctx, http.StatusNotFound, "broker not found")
-		return
-	} else if err != nil {
-		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-		return
-	}
+    broker, err := h.Service.Repository.FindBrokerById(brokerId)
+    if errors.Is(err, ErrBrokerNotFound) {
+        basics.ErrorResponse(ctx, http.StatusNotFound, "broker not found")
+        return
+    } else if err != nil {
+        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+        return
+    }
 
-	response := ToBrokerResponse(broker)
-	ctx.JSON(http.StatusOK, response)
+    response := ToBrokerResponse(broker)
+    ctx.JSON(http.StatusOK, response)
 }
 
 // CreateBroker godoc
@@ -91,20 +93,20 @@ func (h *Handler) GetBrokerDetails(ctx *gin.Context) {
 // @Failure      500 {object} basics.APIError "Internal server error"
 // @Router       /broker/api/v1/ [post]
 func (h *Handler) CreateBroker(ctx *gin.Context) {
-	var req Broker
-	if err := ctx.ShouldBind(&req); err != nil {
-		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
-		return
-	}
+    var req  Broker 
+    if err := ctx.ShouldBind(&req); err != nil {
+        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
+        return
+    }  
 
-	newBroker, err := h.Service.CreateBroker(req)
-	if err != nil {
-		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-		return
-	}
+    newBroker, err := h.Service.CreateBroker(req)
+    if err != nil {
+        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+        return
+    }
 
-	response := ToBrokerResponse(newBroker)
-	ctx.JSON(http.StatusCreated, response)
+    response := ToBrokerResponse(newBroker)
+    ctx.JSON(http.StatusCreated, response)
 }
 
 // UpdateBroker godoc
@@ -123,36 +125,36 @@ func (h *Handler) CreateBroker(ctx *gin.Context) {
 // @Failure      500 {object} basics.APIError "Internal server error"
 // @Router       /broker/api/v1/{id} [put]
 func (h *Handler) UpdateBroker(ctx *gin.Context) {
-	brokerId, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
-		return
-	}
+    brokerId, err := strconv.Atoi(ctx.Param("id"))
+    if err != nil {
+        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
+        return
+    }
 
-	broker, err := h.Service.Repository.FindBrokerById(brokerId)
-	if errors.Is(err, ErrBrokerNotFound) {
-		basics.ErrorResponse(ctx, http.StatusNotFound, "broker not found")
-		return
-	} else if err != nil {
-		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-		return
-	}
-	var req CreateBrokerRequest
-	if err := ctx.ShouldBind(&req); err != nil {
-		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
-		return
-	}
+    broker, err := h.Service.Repository.FindBrokerById(brokerId)
+    if errors.Is(err, ErrBrokerNotFound) {
+        basics.ErrorResponse(ctx, http.StatusNotFound, "broker not found")
+        return
+    } else if err != nil {
+        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+        return
+    }
+    var req Broker
+    if err := ctx.ShouldBind(&req); err != nil {
+        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
+        return
+    }
 
-	updateBroker(&broker, &req)
+   
+    req.Id = broker.Id
+    if err := h.Service.UpdateBroker(req); err != nil {
+        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+        return
+    }
 
-	if err := h.Service.UpdateBroker(broker); err != nil {
-		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	response := ToBrokerResponse(broker)
-	ctx.JSON(http.StatusOK, response)
-}
+    response := ToBrokerResponse(req)
+    ctx.JSON(http.StatusOK, response)
+} 
 
 // UpdateCityPartial godoc
 // @Summary      Update city partially
@@ -168,36 +170,37 @@ func (h *Handler) UpdateBroker(ctx *gin.Context) {
 // @Failure      500 {object} basics.APIError "Internal server error"
 // @Router       /broker/api/v1/{id} [patch]
 func (h *Handler) UpdateBrokerPartial(ctx *gin.Context) {
-	brokerId, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
-		return
-	}
+    brokerId, err := strconv.Atoi(ctx.Param("id"))
+    if err != nil {
+        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
+        return
+    }
 
-	broker, err := h.Service.Repository.FindBrokerById(brokerId)
-	if errors.Is(err, ErrBrokerNotFound) {
-		basics.ErrorResponse(ctx, http.StatusNotFound, "broker not found")
-		return
-	} else if err != nil {
-		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-		return
-	}
+    broker, err := h.Service.Repository.FindBrokerById(brokerId)
+    if errors.Is(err, ErrBrokerNotFound) {
+        basics.ErrorResponse(ctx, http.StatusNotFound, "broker not found")
+        return
+    } else if err != nil {
+        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+        return
+    }
 
-	var req CreateBrokerRequest
-	updateBroker(&broker, &req)
-	if err := ctx.ShouldBind(&req); err != nil {
-		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
-		return
-	}
+    var req CreateBrokerRequest
+    if err := ctx.ShouldBind(&req); err != nil {
+        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
+        return
+    }
+    updateBroker(&broker,&req)
+   
+    if err := h.Service.UpdateBroker(broker); err != nil {
+        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+        return
+    }
 
-	if err := h.Service.UpdateBroker(broker); err != nil {
-		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	response := ToBrokerResponse(broker)
-	ctx.JSON(http.StatusOK, response)
+    response := ToBrokerResponse(broker)
+    ctx.JSON(http.StatusOK, response)
 }
+
 
 // DeleteBroker godoc
 // @Summary      Delete broker
@@ -212,27 +215,27 @@ func (h *Handler) UpdateBrokerPartial(ctx *gin.Context) {
 // @Failure      500 {object} basics.APIError "Internal server error"
 // @Router       /broker/api/v1/{id} [delete]
 func (h *Handler) DeleteBroker(ctx *gin.Context) {
-	brokerId, err := strconv.Atoi(ctx.Param("id"))
-	if err != nil {
-		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
-		return
-	}
+    brokerId, err := strconv.Atoi(ctx.Param("id"))
+    if err != nil {
+        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
+        return
+    }
 
-	broker, err := h.Service.Repository.FindBrokerById(brokerId)
-	if errors.Is(err, ErrBrokerNotFound) {
-		basics.ErrorResponse(ctx, http.StatusNotFound, "broker not found")
-		return
-	} else if err != nil {
-		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-		return
-	}
+    broker, err := h.Service.Repository.FindBrokerById(brokerId)
+    if errors.Is(err, ErrBrokerNotFound) {
+        basics.ErrorResponse(ctx, http.StatusNotFound, "broker not found")
+        return
+    } else if err != nil {
+        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+        return
+    }
 
-	if err := h.Service.Repository.DeleteBroker(broker); err != nil {
-		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-		return
-	}
+    if err := h.Service.Repository.DeleteBroker(broker); err != nil {
+        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+        return
+    }
 
-	ctx.Status(http.StatusNoContent) // 204 No Content
+    ctx.Status(http.StatusNoContent) // 204 No Content
 }
 
 func updateBroker(broker *Broker, req *CreateBrokerRequest) error {

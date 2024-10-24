@@ -8,10 +8,13 @@ from creator. creator_reqres import  create_model_file
 from utils.class_extracker import extract_model_info
 
 model=""" 
-class GroupHall(models.Model):
-    id = models.IntegerField(unique=True, primary_key=True)
-    group = models.ForeignKey(MenuSubGroup, on_delete=CASCADE)
-    hall = models.ForeignKey(TradingHall, on_delete=CASCADE)
+class Broker(models.Model):
+    id = models.IntegerField(primary_key=True)
+    description = models.TextField()
+    persianName = models.TextField()
+    spotId = models.IntegerField()
+    derivativesId = models.IntegerField(null=True)
+    nationalId = models.TextField()
 """
 
 example = extract_model_info(model)

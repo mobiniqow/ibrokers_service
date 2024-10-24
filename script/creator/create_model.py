@@ -20,9 +20,9 @@ def create_struct_to_file(model_info):
     
     for field_name, field_type in model_info['fields'].items():
         if field_name == "id":
-            golang_struct += "    Id            int    `gorm:\"primary_key\"`\n"
+            golang_struct += "    Id            int    `form:\"id\" gorm:\"primary_key\"`\n"
         else:
-            golang_struct += f"    {field_name.capitalize()} {field_type} `json:\"{field_name}\"`\n"
+            golang_struct += f"    {field_name.capitalize()} {field_type} `form:\"{field_name}\"`\n"
     
     golang_struct += "}\n"
     file_path = os.path.join(LOCATION+package_name, f"model.go")

@@ -16,13 +16,13 @@ def create_model_file(model_data):
     # Create fields based on the provided model_data
     fields = []
     for field_name, field_type in model_data['fields'].items():
-        if field_type == 'str':
-            fields.append(f'\t{field_name.capitalize()} *string `json:"{field_name}"`')
+        if field_type == 'string':
+            fields.append(f'\t{field_name.capitalize()} *string `form:"{field_name}"`')
         elif field_type == 'int':
-            fields.append(f'\t{field_name.capitalize()} *int `json:"{field_name}"`')
+            fields.append(f'\t{field_name.capitalize()} *int `form:"{field_name}"`')
         elif field_type == 'date':
             time='import "time";'
-            fields.append(f'\t{field_name.capitalize()} *time.Time `json:"{field_name}"`')
+            fields.append(f'\t{field_name.capitalize()} *time.Time `form:"{field_name}"`')
     
     # Create the content of the model file
     model_content = f"""package {package_name}
