@@ -1,15 +1,15 @@
 package offer
 
 import (
-    "errors"
-    "net/http"
-    "ibrokers_service/pkg/middleware/filter/operators"
-    "ibrokers_service/pkg/middleware/pagination"
-    "ibrokers_service/pkg/utils/basics"
-    "ibrokers_service/pkg/utils/manager"
-    "strconv"
-    "reflect"
-    "github.com/gin-gonic/gin"
+	"errors"
+	"github.com/gin-gonic/gin"
+	"ibrokers_service/pkg/middleware/filter/operators"
+	"ibrokers_service/pkg/middleware/pagination"
+	"ibrokers_service/pkg/utils/basics"
+	"ibrokers_service/pkg/utils/manager"
+	"net/http"
+	"reflect"
+	"strconv"
 )
 
 const BucketName = "offer"
@@ -17,8 +17,8 @@ const BucketName = "offer"
 var ErrOfferNotFound = errors.New("offer not found")
 
 type Handler struct {
-    Service     Service
-    FileManager manager.FileManager
+	Service     Service
+	FileManager manager.FileManager
 }
 
 // ListOffers godoc
@@ -34,18 +34,18 @@ type Handler struct {
 // @Success      200     {array}   OfferResponse
 // @Router       /offer/api/v1/ [get]
 func (h *Handler) GetOffer(ctx *gin.Context) {
-    page := ctx.MustGet("page").(int)
-    limit := ctx.MustGet("limit").(int)
-    filters, _ := ctx.Get("filters")
-    offers, count := h.Service.GetAllOffers(limit, page, filters.([]operators.FilterBlock))
+	page := ctx.MustGet("page").(int)
+	limit := ctx.MustGet("limit").(int)
+	filters, _ := ctx.Get("filters")
+	offers, count := h.Service.GetAllOffers(limit, page, filters.([]operators.FilterBlock))
 
-    response := make([]OfferResponse, len(offers))
-    for i, offer := range offers {
-        response[i] = ToOfferResponse(offer)
-    }
-    paginationResponse := pagination.GenerateResponse(limit, page, count, ctx, response)
+	response := make([]OfferResponse, len(offers))
+	for i, offer := range offers {
+		response[i] = ToOfferResponse(offer)
+	}
+	paginationResponse := pagination.GenerateResponse(limit, page, count, ctx, response)
 
-    ctx.JSON(http.StatusOK, paginationResponse)
+	ctx.JSON(http.StatusOK, paginationResponse)
 }
 
 // GetOfferDetails godoc
@@ -60,23 +60,23 @@ func (h *Handler) GetOffer(ctx *gin.Context) {
 // @Failure      404 {object} basics.APIError "Offer not found"
 // @Router       /offer/api/v1/{id} [get]
 func (h *Handler) GetOfferDetails(ctx *gin.Context) {
-    offerId, err := strconv.Atoi(ctx.Param("id"))
-    if err != nil {
-        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
-        return
-    }
+	offerId, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
+		return
+	}
 
-    offer, err := h.Service.Repository.FindOfferById(offerId)
-    if errors.Is(err, ErrOfferNotFound) {
-        basics.ErrorResponse(ctx, http.StatusNotFound, "offer not found")
-        return
-    } else if err != nil {
-        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-        return
-    }
+	offer, err := h.Service.Repository.FindOfferById(offerId)
+	if errors.Is(err, ErrOfferNotFound) {
+		basics.ErrorResponse(ctx, http.StatusNotFound, "offer not found")
+		return
+	} else if err != nil {
+		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-    response := ToOfferResponse(offer)
-    ctx.JSON(http.StatusOK, response)
+	response := ToOfferResponse(offer)
+	ctx.JSON(http.StatusOK, response)
 }
 
 // CreateOffer godoc
@@ -93,20 +93,20 @@ func (h *Handler) GetOfferDetails(ctx *gin.Context) {
 // @Failure      500 {object} basics.APIError "Internal server error"
 // @Router       /offer/api/v1/ [post]
 func (h *Handler) CreateOffer(ctx *gin.Context) {
-    var req  Offer 
-    if err := ctx.ShouldBind(&req); err != nil {
-        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
-        return
-    }  
+	var req Offer
+	if err := ctx.ShouldBind(&req); err != nil {
+		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
+		return
+	}
 
-    newOffer, err := h.Service.CreateOffer(req)
-    if err != nil {
-        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-        return
-    }
+	newOffer, err := h.Service.CreateOffer(req)
+	if err != nil {
+		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-    response := ToOfferResponse(newOffer)
-    ctx.JSON(http.StatusCreated, response)
+	response := ToOfferResponse(newOffer)
+	ctx.JSON(http.StatusCreated, response)
 }
 
 // UpdateOffer godoc
@@ -125,36 +125,36 @@ func (h *Handler) CreateOffer(ctx *gin.Context) {
 // @Failure      500 {object} basics.APIError "Internal server error"
 // @Router       /offer/api/v1/{id} [put]
 func (h *Handler) UpdateOffer(ctx *gin.Context) {
-    offerId, err := strconv.Atoi(ctx.Param("id"))
-    if err != nil {
-        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
-        return
-    }
+	offerId, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
+		return
+	}
 
-    offer, err := h.Service.Repository.FindOfferById(offerId)
-    if errors.Is(err, ErrOfferNotFound) {
-        basics.ErrorResponse(ctx, http.StatusNotFound, "offer not found")
-        return
-    } else if err != nil {
-        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-        return
-    }
-    var req CreateOfferRequest
-    if err := ctx.ShouldBind(&req); err != nil {
-        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
-        return
-    }
+	offer, err := h.Service.Repository.FindOfferById(offerId)
+	if errors.Is(err, ErrOfferNotFound) {
+		basics.ErrorResponse(ctx, http.StatusNotFound, "offer not found")
+		return
+	} else if err != nil {
+		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+	var req CreateOfferRequest
+	if err := ctx.ShouldBind(&req); err != nil {
+		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
+		return
+	}
 
-    updateOffer(&offer,&req)
-    
-    if err := h.Service.UpdateOffer(offer); err != nil {
-        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-        return
-    }
+	updateOffer(&offer, &req)
 
-    response := ToOfferResponse(offer)
-    ctx.JSON(http.StatusOK, response)
-} 
+	if err := h.Service.UpdateOffer(offer); err != nil {
+		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response := ToOfferResponse(offer)
+	ctx.JSON(http.StatusOK, response)
+}
 
 // UpdateCityPartial godoc
 // @Summary      Update city partially
@@ -170,37 +170,36 @@ func (h *Handler) UpdateOffer(ctx *gin.Context) {
 // @Failure      500 {object} basics.APIError "Internal server error"
 // @Router       /offer/api/v1/{id} [patch]
 func (h *Handler) UpdateOfferPartial(ctx *gin.Context) {
-    offerId, err := strconv.Atoi(ctx.Param("id"))
-    if err != nil {
-        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
-        return
-    }
+	offerId, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
+		return
+	}
 
-    offer, err := h.Service.Repository.FindOfferById(offerId)
-    if errors.Is(err, ErrOfferNotFound) {
-        basics.ErrorResponse(ctx, http.StatusNotFound, "offer not found")
-        return
-    } else if err != nil {
-        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-        return
-    }
+	offer, err := h.Service.Repository.FindOfferById(offerId)
+	if errors.Is(err, ErrOfferNotFound) {
+		basics.ErrorResponse(ctx, http.StatusNotFound, "offer not found")
+		return
+	} else if err != nil {
+		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-    var req CreateOfferRequest
-    updateOffer(&offer,&req)
-    if err := ctx.ShouldBind(&req); err != nil {
-        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
-        return
-    }
-   
-    if err := h.Service.UpdateOffer(offer); err != nil {
-        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-        return
-    }
+	var req CreateOfferRequest
+	updateOffer(&offer, &req)
+	if err := ctx.ShouldBind(&req); err != nil {
+		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request")
+		return
+	}
 
-    response := ToOfferResponse(offer)
-    ctx.JSON(http.StatusOK, response)
+	if err := h.Service.UpdateOffer(offer); err != nil {
+		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response := ToOfferResponse(offer)
+	ctx.JSON(http.StatusOK, response)
 }
-
 
 // DeleteOffer godoc
 // @Summary      Delete offer
@@ -215,27 +214,27 @@ func (h *Handler) UpdateOfferPartial(ctx *gin.Context) {
 // @Failure      500 {object} basics.APIError "Internal server error"
 // @Router       /offer/api/v1/{id} [delete]
 func (h *Handler) DeleteOffer(ctx *gin.Context) {
-    offerId, err := strconv.Atoi(ctx.Param("id"))
-    if err != nil {
-        basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
-        return
-    }
+	offerId, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		basics.ErrorResponse(ctx, http.StatusBadRequest, "Invalid UUID format")
+		return
+	}
 
-    offer, err := h.Service.Repository.FindOfferById(offerId)
-    if errors.Is(err, ErrOfferNotFound) {
-        basics.ErrorResponse(ctx, http.StatusNotFound, "offer not found")
-        return
-    } else if err != nil {
-        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-        return
-    }
+	offer, err := h.Service.Repository.FindOfferById(offerId)
+	if errors.Is(err, ErrOfferNotFound) {
+		basics.ErrorResponse(ctx, http.StatusNotFound, "offer not found")
+		return
+	} else if err != nil {
+		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-    if err := h.Service.Repository.DeleteOffer(offer); err != nil {
-        basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
-        return
-    }
+	if err := h.Service.Repository.DeleteOffer(offer); err != nil {
+		basics.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-    ctx.Status(http.StatusNoContent) // 204 No Content
+	ctx.Status(http.StatusNoContent) // 204 No Content
 }
 
 func updateOffer(offer *Offer, req *CreateOfferRequest) error {

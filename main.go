@@ -50,7 +50,7 @@ func main() {
 
 	// Routing
 	router := app.RouterGroup
-	setupRoutes(&router, db, fileManager)
+	setupRoute(&router, db, fileManager)
 
 	// Swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -110,8 +110,8 @@ func setupMiddleware(app *gin.Engine, lokiClient *loki.Client) {
 	app.Use(error_handler.ErrorHandlingMiddleware())
 }
 
-func setupRoutes(router *gin.RouterGroup, db *gorm.DB, fileManager *manager.FileManager) {
+func setupBrokerRoute(router *gin.RouterGroup, db *gorm.DB, fileManager *manager.FileManager) {
 	rep := broker.Repository{DB: db}
 	srv := broker.Service{Repository: rep}
-	broker.CreateEndpoint(srv, router.Group("/broker"), *fileManager).V1()
+	broker.CreateEndpoint(srv, router, *fileManager).V1()
 }
