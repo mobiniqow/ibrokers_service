@@ -1,10 +1,16 @@
 import os
 import re
 from utils.pascal_to_snake import pascal_to_snake
+from utils.config import LOCATION
 
 def create_mapper(class_name, fields):
     package_name = pascal_to_snake(class_name)
-    function_filename = os.path.join(package_name, f"mapper.go")
+    
+    file_package_name = LOCATION+package_name
+    
+    if not os.path.exists(file_package_name):
+        os.makedirs(file_package_name)
+    function_filename = os.path.join(LOCATION+package_name, f"mapper.go")
 
     # Create the fields for the response
     response_fields = []
@@ -32,12 +38,8 @@ func To{class_name}Response(buyMethod {class_name}) {class_name}Response {{
 }}
 """
 
-    # Create the package directory if it doesn't exist
-    if not os.path.exists(package_name):
-        os.makedirs(package_name)
-
     # Save the function in the file
     with open(function_filename, 'w') as file:
         file.write(function_content)
 
-    print(f"File {function_filename} saved.")
+    print(f"Mapper done.")

@@ -1,12 +1,15 @@
 import os
 import re
 from utils.pascal_to_snake import pascal_to_snake
-
+from utils.config import LOCATION
 
 def create_endpoints_file(class_name):
     package_name = pascal_to_snake(class_name)
-    endpoints_filename = os.path.join(package_name, "endpoints.go")
-
+    file_package_name = LOCATION + package_name
+    
+    if not os.path.exists(file_package_name):
+        os.makedirs(file_package_name)
+    endpoints_filename = os.path.join(file_package_name, "endpoints.go")
     # Create the content of the endpoints file
     endpoints_content = f"""package {package_name}
 
@@ -39,15 +42,10 @@ func (e *Endpoints) V1() {{
     }}
 }}
 """
-
-    # Create the package directory if it doesn't exist
-    if not os.path.exists(package_name):
-        os.makedirs(package_name)
-
     # Save the Endpoints in the file
     with open(endpoints_filename, 'w') as file:
         file.write(endpoints_content)
     
-    print(f"File Endpoints saved at {endpoints_filename}.")
+    print(f"EndPoints done.")
 
  

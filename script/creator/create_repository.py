@@ -1,11 +1,16 @@
 import os
 import re
 from utils.pascal_to_snake import pascal_to_snake
-
+from utils.config import LOCATION
 
 def create_repository_file(class_name):
     package_name = pascal_to_snake(class_name)
-    repository_filename = os.path.join(package_name, "repository.go")
+    
+    file_package_name = LOCATION+package_name
+    
+    if not os.path.exists(file_package_name):
+        os.makedirs(file_package_name)
+    repository_filename = os.path.join(LOCATION+package_name, "repository.go")
 
     # ایجاد محتویات فایل
     repository_content = f"""package {package_name}
@@ -58,14 +63,10 @@ func (r *Repository) Find{class_name}ById(id int) ({class_name}, error) {{
 }}
 """
 
-    # ایجاد دایرکتوری با نام پکیج
-    if not os.path.exists(package_name):
-        os.makedirs(package_name)
-
     # ذخیره مدل در فایل
     with open(repository_filename, 'w') as file:
         file.write(repository_content)
     
-    print(f"فایل Repository در {repository_filename} ذخیره شد.")
+    print(f"Repository done.")
 
  

@@ -1,11 +1,17 @@
 import os
 import re
 from utils.pascal_to_snake import pascal_to_snake
-
+from utils.config import LOCATION
 
 def create_service_file(class_name):
     package_name = pascal_to_snake(class_name)
-    service_filename = os.path.join(package_name, "service.go")
+    
+    file_package_name = LOCATION+package_name
+    
+    if not os.path.exists(file_package_name):
+        os.makedirs(file_package_name)
+        
+    service_filename = os.path.join(LOCATION+package_name, "service.go")
  
     service_content = f"""package {package_name}
 
@@ -35,13 +41,11 @@ func (s *Service) GetAll{class_name}s(limit, page int, filters []operators.Filte
     return s.Repository.GetAll{class_name}s(limit, page, filters)
 }}
 """
- 
-    if not os.path.exists(package_name):
-        os.makedirs(package_name)
+
  
     with open(service_filename, 'w') as file:
         file.write(service_content)
     
-    print(f"فایل Service در {service_filename} ذخیره شد.")
+    print(f"Service done.")
  
  

@@ -1,11 +1,16 @@
 import os
 import re
 from utils.pascal_to_snake import pascal_to_snake
-
+from utils.config import LOCATION
 
 def create_handler_file(class_name):
     package_name = pascal_to_snake(class_name)
-    handler_filename = os.path.join(package_name, "handler.go")
+    
+    file_package_name = LOCATION+package_name
+    
+    if not os.path.exists(file_package_name):
+        os.makedirs(file_package_name)
+    handler_filename = os.path.join(LOCATION+package_name, "handler.go")
 
     # ایجاد محتویات فایل
     handler_content = f"""package {package_name}
@@ -255,7 +260,7 @@ func update{class_name}({class_name.lower()} *{class_name}, req *Create{class_na
 	for i := 0; i < reqVal.NumField(); i++ {{
 		fieldVal := reqVal.Field(i)
 		if !fieldVal.IsNil() {{
-			{class_name.lower()}Field := offerVal.FieldByName(reqVal.Type().Field(i).Name)
+			{class_name.lower()}Field := {class_name.lower()}Val.FieldByName(reqVal.Type().Field(i).Name)
 			if {class_name.lower()}Field.IsValid() && {class_name.lower()}Field.CanSet() {{
 				{class_name.lower()}Field.Set(reflect.Indirect(fieldVal))
 			}}
@@ -266,14 +271,11 @@ func update{class_name}({class_name.lower()} *{class_name}, req *Create{class_na
 }}
 """
 
-    # ایجاد دایرکتوری با نام پکیج
-    if not os.path.exists(package_name):
-        os.makedirs(package_name)
 
     # ذخیره Handler در فایل
     with open(handler_filename, 'w') as file:
         file.write(handler_content)
     
-    print(f"فایل Handler در {handler_filename} ذخیره شد.")
+    print(f"Handler done.")
 
  

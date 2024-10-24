@@ -16,6 +16,9 @@ def extract_model_info(django_model):
         elif 'models.BigIntegerField' in line:
             field_name = re.search(r'(\w+)\s*=', line).group(1)
             fields[field_name] = 'int'
+        elif 'models.IntegerField' in line:
+            field_name = re.search(r'(\w+)\s*=', line).group(1)
+            fields[field_name] = 'int'
         elif 'models.DateField' in line:
             field_name = re.search(r'(\w+)\s*=', line).group(1)
             fields[field_name] = 'time.Time'
