@@ -3,26 +3,27 @@ package main
 import (
 	"ibrokers_service/internal/broker"
 	"ibrokers_service/internal/buy_method"
-	"ibrokers_service/internal/commodity"
-	"ibrokers_service/internal/contract_type"
-	"ibrokers_service/internal/currency_unit"
-	"ibrokers_service/internal/delivery_place"
-	"ibrokers_service/internal/group"
-	"ibrokers_service/internal/group_hall"
-	"ibrokers_service/internal/hall_menu_group"
-	"ibrokers_service/internal/hall_menu_sub_group"
-	"ibrokers_service/internal/main_group"
-	"ibrokers_service/internal/manufacturers"
-	"ibrokers_service/internal/measure_unit"
-	"ibrokers_service/internal/offer"
-	"ibrokers_service/internal/offer_mod"
-	"ibrokers_service/internal/offer_type"
-	"ibrokers_service/internal/packaging_type"
-	"ibrokers_service/internal/report"
-	"ibrokers_service/internal/settlement"
-	"ibrokers_service/internal/sub_group"
-	"ibrokers_service/internal/supplier"
-	"ibrokers_service/internal/trading_hall"
+
+	// "ibrokers_service/internal/commodity"
+	// "ibrokers_service/internal/contract_type"
+	// "ibrokers_service/internal/currency_unit"
+	// "ibrokers_service/internal/delivery_place"
+	// "ibrokers_service/internal/group"
+	// "ibrokers_service/internal/group_hall"
+	// "ibrokers_service/internal/hall_menu_group"
+	// "ibrokers_service/internal/hall_menu_sub_group"
+	// "ibrokers_service/internal/main_group"
+	// "ibrokers_service/internal/manufacturers"
+	// "ibrokers_service/internal/measure_unit"
+
+	// "ibrokers_service/internal/offer_mod"
+	// "ibrokers_service/internal/offer_type"
+	// "ibrokers_service/internal/packaging_type"
+	// "ibrokers_service/internal/report"
+	// "ibrokers_service/internal/settlement"
+	// "ibrokers_service/internal/sub_group"
+	// "ibrokers_service/internal/supplier"
+	// "ibrokers_service/internal/trading_hall"
 	"ibrokers_service/pkg/configs"
 	"ibrokers_service/pkg/middleware/error_handler"
 	"ibrokers_service/pkg/middleware/filter"
@@ -142,104 +143,104 @@ func setupRoutes(router *gin.RouterGroup, db *gorm.DB, fileManager *manager.File
 		srv := buy_method.Service{Repository: rep}
 		buy_method.CreateEndpoint(srv, router.Group("/buy-method"), *fileManager).V1()
 	}
-	{
-		rep := commodity.Repository{DB: db}
-		srv := commodity.Service{Repository: rep}
-		commodity.CreateEndpoint(srv, router.Group("/commodity"), *fileManager).V1()
-	}
-	{
-		rep := contract_type.Repository{DB: db}
-		srv := contract_type.Service{Repository: rep}
-		contract_type.CreateEndpoint(srv, router.Group("/contract-type"), *fileManager).V1()
-	}
-	{
-		rep := currency_unit.Repository{DB: db}
-		srv := currency_unit.Service{Repository: rep}
-		currency_unit.CreateEndpoint(srv, router.Group("/contract-unit"), *fileManager).V1()
-	}
-	{
-		rep := delivery_place.Repository{DB: db}
-		srv := delivery_place.Service{Repository: rep}
-		delivery_place.CreateEndpoint(srv, router.Group("/delivery-place"), *fileManager).V1()
-	}
-	{
-		rep := main_group.Repository{DB: db}
-		srv := main_group.Service{Repository: rep}
-		main_group.CreateEndpoint(srv, router.Group("/menu-group"), *fileManager).V1()
-	}
-	{
-		rep := group.Repository{DB: db}
-		srv := group.Service{Repository: rep}
-		group.CreateEndpoint(srv, router.Group("/group"), *fileManager).V1()
-	}
-	{
-		rep := sub_group.Repository{DB: db}
-		srv := sub_group.Service{Repository: rep}
-		sub_group.CreateEndpoint(srv, router.Group("/sub-group"), *fileManager).V1()
-	}
-	{
-		rep := group_hall.Repository{DB: db}
-		srv := group_hall.Service{Repository: rep}
-		group_hall.CreateEndpoint(srv, router.Group("/group-hall"), *fileManager).V1()
-	}
-	{
-		rep := hall_menu_group.Repository{DB: db}
-		srv := hall_menu_group.Service{Repository: rep}
-		hall_menu_group.CreateEndpoint(srv, router.Group("/hall-menu-group"), *fileManager).V1()
-	}
-	{
-		rep := trading_hall.Repository{DB: db}
-		srv := trading_hall.Service{Repository: rep}
-		trading_hall.CreateEndpoint(srv, router.Group("/trading-hall"), *fileManager).V1()
-	}
-	{
-		rep := hall_menu_sub_group.Repository{DB: db}
-		srv := hall_menu_sub_group.Service{Repository: rep}
-		hall_menu_sub_group.CreateEndpoint(srv, router.Group("/hall-menu-sub-group"), *fileManager).V1()
-	}
-	{
-		rep := manufacturers.Repository{DB: db}
-		srv := manufacturers.Service{Repository: rep}
-		manufacturers.CreateEndpoint(srv, router.Group("/manufacturers"), *fileManager).V1()
-	}
-	{
-		rep := measure_unit.Repository{DB: db}
-		srv := measure_unit.Service{Repository: rep}
-		measure_unit.CreateEndpoint(srv, router.Group("/measure-unit"), *fileManager).V1()
-	}
-	{
-		rep := offer.Repository{DB: db}
-		srv := offer.Service{Repository: rep}
-		offer.CreateEndpoint(srv, router.Group("/offer"), *fileManager).V1()
-	}
-	{
-		rep := offer_mod.Repository{DB: db}
-		srv := offer_mod.Service{Repository: rep}
-		offer_mod.CreateEndpoint(srv, router.Group("/offer-mod"), *fileManager).V1()
-	}
-	{
-		rep := offer_type.Repository{DB: db}
-		srv := offer_type.Service{Repository: rep}
-		offer_type.CreateEndpoint(srv, router.Group("/offer-type"), *fileManager).V1()
-	}
-	{
-		rep := packaging_type.Repository{DB: db}
-		srv := packaging_type.Service{Repository: rep}
-		packaging_type.CreateEndpoint(srv, router.Group("/packaging-type"), *fileManager).V1()
-	}
-	{
-		rep := report.Repository{DB: db}
-		srv := report.Service{Repository: rep}
-		report.CreateEndpoint(srv, router.Group("/report"), *fileManager).V1()
-	}
-	{
-		rep := settlement.Repository{DB: db}
-		srv := settlement.Service{Repository: rep}
-		settlement.CreateEndpoint(srv, router.Group("/settlement"), *fileManager).V1()
-	}
-	{
-		rep := supplier.Repository{DB: db}
-		srv := supplier.Service{Repository: rep}
-		supplier.CreateEndpoint(srv, router.Group("/supplier"), *fileManager).V1()
-	}
+	// {
+	// 	rep := commodity.Repository{DB: db}
+	// 	srv := commodity.Service{Repository: rep}
+	// 	commodity.CreateEndpoint(srv, router.Group("/commodity"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := contract_type.Repository{DB: db}
+	// 	srv := contract_type.Service{Repository: rep}
+	// 	contract_type.CreateEndpoint(srv, router.Group("/contract-type"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := currency_unit.Repository{DB: db}
+	// 	srv := currency_unit.Service{Repository: rep}
+	// 	currency_unit.CreateEndpoint(srv, router.Group("/contract-unit"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := delivery_place.Repository{DB: db}
+	// 	srv := delivery_place.Service{Repository: rep}
+	// 	delivery_place.CreateEndpoint(srv, router.Group("/delivery-place"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := main_group.Repository{DB: db}
+	// 	srv := main_group.Service{Repository: rep}
+	// 	main_group.CreateEndpoint(srv, router.Group("/menu-group"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := group.Repository{DB: db}
+	// 	srv := group.Service{Repository: rep}
+	// 	group.CreateEndpoint(srv, router.Group("/group"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := sub_group.Repository{DB: db}
+	// 	srv := sub_group.Service{Repository: rep}
+	// 	sub_group.CreateEndpoint(srv, router.Group("/sub-group"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := group_hall.Repository{DB: db}
+	// 	srv := group_hall.Service{Repository: rep}
+	// 	group_hall.CreateEndpoint(srv, router.Group("/group-hall"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := hall_menu_group.Repository{DB: db}
+	// 	srv := hall_menu_group.Service{Repository: rep}
+	// 	hall_menu_group.CreateEndpoint(srv, router.Group("/hall-menu-group"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := trading_hall.Repository{DB: db}
+	// 	srv := trading_hall.Service{Repository: rep}
+	// 	trading_hall.CreateEndpoint(srv, router.Group("/trading-hall"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := hall_menu_sub_group.Repository{DB: db}
+	// 	srv := hall_menu_sub_group.Service{Repository: rep}
+	// 	hall_menu_sub_group.CreateEndpoint(srv, router.Group("/hall-menu-sub-group"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := manufacturers.Repository{DB: db}
+	// 	srv := manufacturers.Service{Repository: rep}
+	// 	manufacturers.CreateEndpoint(srv, router.Group("/manufacturers"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := measure_unit.Repository{DB: db}
+	// 	srv := measure_unit.Service{Repository: rep}
+	// 	measure_unit.CreateEndpoint(srv, router.Group("/measure-unit"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := offer.Repository{DB: db}
+	// 	srv := offer.Service{Repository: rep}
+	// 	offer.CreateEndpoint(srv, router.Group("/offer"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := offer_mod.Repository{DB: db}
+	// 	srv := offer_mod.Service{Repository: rep}
+	// 	offer_mod.CreateEndpoint(srv, router.Group("/offer-mod"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := offer_type.Repository{DB: db}
+	// 	srv := offer_type.Service{Repository: rep}
+	// 	offer_type.CreateEndpoint(srv, router.Group("/offer-type"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := packaging_type.Repository{DB: db}
+	// 	srv := packaging_type.Service{Repository: rep}
+	// 	packaging_type.CreateEndpoint(srv, router.Group("/packaging-type"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := report.Repository{DB: db}
+	// 	srv := report.Service{Repository: rep}
+	// 	report.CreateEndpoint(srv, router.Group("/report"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := settlement.Repository{DB: db}
+	// 	srv := settlement.Service{Repository: rep}
+	// 	settlement.CreateEndpoint(srv, router.Group("/settlement"), *fileManager).V1()
+	// }
+	// {
+	// 	rep := supplier.Repository{DB: db}
+	// 	srv := supplier.Service{Repository: rep}
+	// 	supplier.CreateEndpoint(srv, router.Group("/supplier"), *fileManager).V1()
+	// }
 }
